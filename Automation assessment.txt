@@ -1,0 +1,231 @@
+package pack;
+
+ 
+
+import org.openqa.selenium.By;
+
+import org.openqa.selenium.WebDriver;
+
+import org.openqa.selenium.chrome.ChromeDriver;
+
+import org.testng.Assert;
+
+import org.testng.annotations.Test;
+
+ 
+
+public class Selenium {
+
+      
+
+          WebDriver driver ;
+
+          String baseUrl = "http://demowebshop.tricentis.com";
+
+       String driverPath = "D:\\chromedriver.exe";
+
+      
+
+       @Test
+
+       public void orderBooks() {
+
+          System.out.println("launching browser");
+
+          System.setProperty("webdriver.chrome.driver",driverPath);  //setting properties to chrome
+
+          driver = new ChromeDriver();  //Initializing new chromedriver
+
+          driver.get(baseUrl);  //opening URL in browser
+
+          String expectedTitle = "Demo Web Shop";
+
+          String actualTitle = driver.getTitle();
+
+          System.out.println(actualTitle);
+
+          Assert.assertEquals(actualTitle, expectedTitle); //results true
+
+          
+
+          String relativexpath= "//a[@class='ico-login']";
+
+          driver.findElement(By.xpath(relativexpath)).click();  //login link
+
+          String expectedWelcomePage = "Welcome, Please Sign In!";
+
+          String actualWelcomePage = driver.findElement(By.xpath("//h1")).getText();
+
+          System.out.println(actualWelcomePage);
+
+          Assert.assertEquals(actualWelcomePage, expectedWelcomePage);  //results true for welcome page
+
+          
+
+          String userId = "//input[@class='email']";
+
+          driver.findElement(By.xpath(hgd)).sendKeys("atest@gmail.com");
+
+          driver.findElement(By.xpath("//input[@class='password']")).sendKeys("123456");
+
+          driver.findElement(By.xpath("//input[contains(@class, 'button-1') and contains(@class, 'login-button')]")).click();
+
+          String expectedUserId = "atest@gmail.com";
+
+          String actualUserId = driver.findElement(By.xpath("//a[@class='account']")).getText();
+
+          System.out.println(actualUserId);
+
+          Assert.assertEquals(actualUserId, expectedUserId);  //results true for login userid matches as a login account
+
+      
+
+          driver.findElement(By.xpath("//a[@class='ico-cart']")).click();
+
+          String qty = driver.findElement(By.xpath("//span[@class='cart-qty']")).getText();
+
+          int q = Integer.parseInt(qty.substring(1, qty.length()-1));  // getting no of items from cart
+
+          System.out.println("before deleting no of items are "+ q); //no of items in cart before deleting
+
+          if(q>0) {
+
+                 driver.findElement(By.xpath("//input[@name='removefromcart']")).click();  //selecting items in cart
+
+                 driver.findElement(By.xpath("//input[contains(@class, 'button-2') and contains(@class, 'update-cart-button')]")).click();  //deleting items in cart
+
+                 
+
+          }
+
+          System.out.println(" q= "+q); //q will be zer0
+
+          Assert.assertEquals(0, q);  //results true as items will be zero after deletion
+
+          
+
+          driver.findElement(By.xpath("//ul[@class='top-menu']/li[1]")).click();  //selecting books to order
+
+          driver.findElement(By.linkText("Computing and Internet")).click();  //selecting a particular book
+
+          driver.findElement(By.xpath("//div[@class='add-to-cart-panel']/input[1]")).clear();  //clear 1 from the no if quantity
+
+          driver.findElement(By.xpath("//div[@class='add-to-cart-panel']/input[1]")).sendKeys("3");  // enter 3 in the quantity
+
+          driver.findElement(By.xpath("//input[contains(@class, 'button-1') and contains(@class, 'add-to-cart-button')]")).click(); //click on add to cart
+
+//       String actualmsg = driver.findElement(By.xpath("//p[@class='content']")).getText();
+
+//       String expectedmsg = "The product has been added to your";
+
+//       System.out.println(actualmsg);
+
+//       Assert.assertEquals(actualmsg, expectedmsg);
+
+          
+
+          //driver.manage().timeouts().implicitlyWait(9, TimeUnit.SECONDS);
+
+          try {
+
+                     Thread.sleep(8000);  // wait for the application to get updated the cart with selected items as application is slow at this point
+
+              } catch (InterruptedException e) {
+
+                     // TODO Auto-generated catch block
+
+                     e.printStackTrace();
+
+              }
+
+             
+
+          driver.findElement(By.xpath("//a[@class='ico-cart']")).click();  // click on cart
+
+          driver.findElement(By.xpath("//input[@id='termsofservice']")).click();  //check the check-box of term sof service
+
+          driver.findElement(By.xpath("//button[@id='checkout']")).click(); //click on checkout
+
+          driver.findElement(By.xpath("//select[@id='billing-address-select']")).click(); //click on billing address dropdown
+
+          driver.findElement(By.xpath("//select[@id='billing-address-select']/option[3]")).click();  //select the billing address from the dropdown
+
+          driver.findElement(By.xpath("//input[contains(@class, 'button-1') and contains(@class, 'new-address-next-step-button')]")).click();  //click on continue
+
+          try {
+
+                     Thread.sleep(8000);  //wait for the application to load as it is taking time to display next elements
+
+          } catch (InterruptedException e) {
+
+                    
+
+                     e.printStackTrace();
+
+          }
+
+          driver.findElement(By.xpath("//*[@id='shipping-address-select']")).click();  // click on shipping address dropdown
+
+          driver.findElement(By.xpath("//select[@id='shipping-address-select']/option[3]")).click();  //select shipping address option
+
+          driver.findElement(By.xpath("//input[contains(@class, 'button-1') and contains(@class, 'new-address-next-step-button')]")).click();  // click on continue
+
+          driver.findElement(By.xpath("//input[@id='shippingoption_1,]")).click();
+
+          driver.findElement(By.xpath("//input[contains(@class, 'button-1') and contains(@class, 'shipping-method-next-step-button')]")).click(); //click on continue
+
+          driver.findElement(By.xpath("//input[@id='paymentmethod_0']")).click();  //select payment method as COD
+
+          driver.findElement(By.xpath("//input[contains(@class, 'button-1') and contains(@class, 'payment-method-next-step-button')]")).click();  // click on continue
+
+          String actualPaymentMSG = driver.findElement(By.xpath("//*[@id='checkout-payment-info-load']/div/div/div[1]/table/tbody/tr/td/p")).getText();  // get the payment message after payment its displayed
+
+          String expectedPaymentMSG = "You will pay by COD";
+
+          Assert.assertEquals(actualPaymentMSG, expectedPaymentMSG);  //results true as payment message is as given
+
+          
+
+          driver.findElement(By.xpath("//input[contains(@class, 'button-1') and contains(@class, 'payment-info-next-step-button')]")).click();  //click on payment information
+
+          driver.findElement(By.xpath("//input[contains(@class, 'button-1') and contains(@class, 'confirm-order-next-step-button')]")).click();  //click on confirm order
+
+          String actualOrderStatus = driver.findElement(By.xpath("//div[contains(@class, 'section') and contains(@class, 'order-completed')]/div/strong")).getText();  //get the order status message
+
+          String expectedOrderStatus  ="Your order has been successfully processed!";
+
+          Assert.assertEquals(actualOrderStatus, expectedOrderStatus);  //results true as order status message is as expected
+
+          
+
+          String orderNumber = driver.findElement(By.xpath("//ul[@class='details']/li[1]")).getText();  //get the order number in the order details displayed
+
+          System.out.println(orderNumber);  // displaying order number in the console
+
+          driver.findElement(By.xpath("//input[contains(@class, 'button-2') and contains(@class, 'order-completed-continue-button')]")).click();  // click on continue
+
+          driver.findElement(By.xpath("//a[@class='ico-logout']"));  // click on logout
+
+          
+
+          
+
+          
+
+          
+
+          
+
+          
+
+       }
+
+      
+
+        
+
+        
+
+      
+
+}
